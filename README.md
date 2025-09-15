@@ -1,18 +1,35 @@
-# spring boot 模板服务
+ChronoScheduler：高可用分布式定时任务服务
+项目简介
+ChronoScheduler 是一个基于 Spring Cloud 构建的高可用、高精准分布式定时任务微服务。该项目旨在为微服务生态提供一个稳定可靠的“闹钟”服务，能够高效处理高并发、高负载的定时任务需求。
 
-构建子服务项目模板
+技术栈
+核心框架：Spring Boot, Spring Cloud
 
-## 接入能力
+服务治理：Nacos（服务注册与发现、配置中心）
 
-* spring cloud nacos 服务注册
-* spring cloud nacos 配置中心
-* spring cloud open feign 服务通信
-* lombok 简化开发
+服务通信：OpenFeign
 
-## 模板使用
+数据存储：
 
-1. 复制`bitstorm-svr-tmpl`修改项目名为新项目名称
-2. 修改新项目`pom.xml`文件`artifactId`节点为新项目名称 
-3. 修改根项目`pom.xml`文件`modules`节点，加入新项目
-4. 修改`package`包名，包括 import 的包名 
-5. 修改`启动类名称`"# ChronoScheduler" 
+MySQL: 主数据库，用于持久化任务数据和日志。
+
+Redis: 缓存层，用于高频任务的快速调度。
+
+消息队列：Kafka
+
+网关：Spring Cloud Gateway
+
+项目管理：Maven
+
+部署环境：Docker, Docker Compose
+
+核心功能
+高精准度调度：通过对任务数据进行分治和有序化处理，结合 Redis 的 ZSET 数据结构，实现了高频任务的秒级调度。
+
+高负载处理：针对同一时间大量任务触发的场景，利用 Redis 缓存分片管理和 Java 线程池并行处理，确保在高负载下任务也能得到快速响应。
+
+冷热数据分区：设计了数据迁移模块，将频繁访问的“热数据”动态维护在 Redis 缓存中，将低频访问的“冷数据”归档至 MySQL，高效利用了不同存储资源的特性。
+
+服务间通信：采用 OpenFeign 实现声明式 HTTP 调用，简化了微服务之间的通信复杂度。
+
+统一配置管理：通过 Nacos 配置中心集中管理所有微服务的配置，支持动态配置刷新，无需重启服务。
